@@ -20,3 +20,6 @@ def admin_login(request):
             return render(render,"admin_login.html",{'error':"Invalid credentials"})
         
     return render(request,'admin_login.html')
+
+def admin_dashboard(request):
+    return render(request, 'admin_dashboard.html')
