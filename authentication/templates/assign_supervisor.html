@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assign Supervisor</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #f4f6f9;
+        }
+
+        .navbar {
+            background: #1e293b;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        .nav-links a:hover {
+            color: #38bdf8;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
+
+        button:hover {
+            background: #15803d;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div><b>Admin Panel</b></div>
+        <div class="nav-links">
+            <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+            <a href="{% url 'add_user' %}">Add User</a>
+            <a href="{% url 'assign_therapist' %}">Assign Therapist</a>
+            <a href="{% url 'assign_supervisor' %}">Assign Supervisor</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+
+    <!-- FORM -->
+    <div class="container">
+        <h2>Assign Supervisor to Therapist</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Select Therapist</label>
+            <select name="therapist_id">
+                {% for t in therapists %}
+                    <option value="{{ t.id }}">{{ t.username }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Select Supervisor</label>
+            <select name="supervisor_id">
+                {% for s in supervisors %}
+                    <option value="{{ s.id }}">{{ s.username }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Assign</button>
+        </form>
+    </div>
+
+</body>
+</html>
