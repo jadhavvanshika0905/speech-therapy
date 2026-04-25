@@ -1,0 +1,12 @@
+<h2>Edit Patient</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    Name: <input type="text" name="name" value="{{ patient.name }}"><br><br>
+    Age: <input type="number" name="age" value="{{ patient.age }}"><br><br>
+    Issue: <input type="text" name="speech_issue" value="{{ patient.speech_issue }}"><br><br>
+    Contact: <input type="text" name="contact" value="{{ patient.contact }}"><br><br>
+
+    <button type="submit">Update</button>
+</form>

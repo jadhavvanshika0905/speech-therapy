@@ -1,0 +1,31 @@
+<div class="container mt-5">
+
+    {% if report %}
+
+        <h2 class="text-center">Therapy Report</h2>
+
+        <p><b>Patient:</b> {{ report.plan.patient.name }}</p>
+
+        <p><b>Summary:</b></p>
+        <pre>{{ report.summary }}</pre>
+
+        <p><b>Status:</b> {{ report.status }}</p>
+
+        <a href="{% url 'download_report_pdf' report.id %}" class="btn btn-primary">
+            Download PDF
+        </a>
+
+    {% else %}
+
+        <h2 class="text-center">Therapy Report</h2>
+        <p>No report available yet.</p>
+
+    {% endif %}
+
+    <br>
+
+    <a href="{% url 'plan_list' %}" class="btn btn-secondary">
+        Back to Plans
+    </a>
+
+</div>

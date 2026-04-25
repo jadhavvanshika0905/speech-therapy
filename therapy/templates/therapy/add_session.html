@@ -1,0 +1,18 @@
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Speech Therapy System</h2>
+
+    <h2>Add Session</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="date" name="date" class="form-control mb-3" required>
+
+        <textarea name="progress" class="form-control mb-3" placeholder="Progress"></textarea>
+
+        <textarea name="notes" class="form-control mb-3" placeholder="Notes"></textarea>
+
+        <button class="btn btn-primary">Save Session</button>
+    </form>
+</div>
+

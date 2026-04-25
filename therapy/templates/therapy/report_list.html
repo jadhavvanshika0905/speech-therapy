@@ -1,0 +1,25 @@
+<h2>Reports</h2>
+
+<table border="1">
+    <tr>
+        <th>Patient</th>
+        <th>Summary</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+
+    {% for report in reports %}
+    <tr>
+        <td>{{ report.plan.patient.name }}</td>
+        <td>{{ report.summary }}</td>
+        <td>{{ report.status }}</td>
+        <td>
+            {% if report.status == "Pending" %}
+                <a href="{% url 'approve_report' report.id %}">Approve</a>
+            {% else %}
+                Approved ✅
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>

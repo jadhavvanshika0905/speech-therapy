@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Patient</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Speech Therapy System</h2>
+    <h2>Add Patient</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" name="name" class="form-control mb-3" placeholder="Name" required>
+
+        <input type="number" name="age" class="form-control mb-3" placeholder="Age" min="0" max="120" required>
+
+        <input type="text" name="speech_issue" class="form-control mb-3" placeholder="Speech Issue" required>
+
+        <input type="text" name="contact" class="form-control mb-3" placeholder="Contact" required>
+
+        <button type="submit" class="btn btn-primary">Save Patient</button>
+    </form>
+</div>
+
+</body>
+</html>

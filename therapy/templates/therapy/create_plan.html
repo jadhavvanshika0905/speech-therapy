@@ -1,0 +1,29 @@
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Speech Therapy System</h2>
+
+    <h2>Create Therapy Plan</h2>
+
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <select name="patient" class="form-control mb-3" required>
+            <option value="" disabled selected>Select Patient</option>
+
+            {% for p in patients %}
+            <option value="{{ p.id }}">{{ p.name }}</option>
+            {% endfor %}
+        </select>
+
+        <textarea name="exercises" class="form-control mb-3" placeholder="Exercises"></textarea>
+        <textarea name="goals" class="form-control mb-3" placeholder="Goals"></textarea>
+        <input type="number" name="duration" class="form-control mb-3" placeholder="Duration (in days)" min="1" max="365" required>
+
+        <button class="btn btn-success">Create Plan</button>
+    </form>
+</div>

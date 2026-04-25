@@ -2,7 +2,6 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from .models import User
 
-
 # Create your views here.
 def login_view(request):
     if request.method == "POST":
@@ -44,7 +43,8 @@ def admin_dashboard(request):
 
     therapists = User.objects.filter(role='therapist')
     supervisors = User.objects.filter(role='supervisor')
-    patients = User.objects.filter(role='patient')
+    patients_users = User.objects.filter(role='patient')
+    patients = User.objects.filter(role='patient').select_related('therapist')
 
     
     context = {
@@ -52,7 +52,6 @@ def admin_dashboard(request):
         'therapists_list': therapists,
         'supervisors_list': supervisors,
         'patients_list': patients,
-        
         'total_users': users.count(),
         'active_users': users.filter(is_active=True).count(),
         'therapists': users.filter(role='therapist').count(),

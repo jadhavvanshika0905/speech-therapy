@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Feedback</title>
+</head>
+
+<body>
+
+<h2>Delete Feedback</h2>
+
+<p>Are you sure you want to delete feedback for:</p>
+
+<p><b>{{ feedback.plan.patient.name }}</b></p>
+
+<p>"{{ feedback.feedback }}"</p>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <button type="submit">Yes, Delete</button>
+    <a href="{% url 'supervisor_dashboard' %}">Cancel</a>
+</form>
+
+</body>
+</html>

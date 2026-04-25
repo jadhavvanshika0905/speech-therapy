@@ -1,0 +1,62 @@
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Speech Therapy System</h2>
+
+    <h2>My Therapy Plans</h2>
+
+    <table class="table table-bordered mt-3">
+        <tr>
+            <th>Patient</th>
+            <th>Goals</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+
+        {% for plan in plans %}
+        <tr>
+            <td>{{ plan.patient.name }}</td>
+            <td>{{ plan.goals }}</td>
+
+            <td>
+                {% if plan.is_approved %}
+                    Approved
+                {% elif plan.is_submitted %}
+                    Submitted
+                {% else %}
+                    Draft
+                {% endif %}
+            </td>
+
+            <td>
+                {% if not plan.is_submitted %}
+                    <a href="{% url 'submit_plan' plan.id %}" class="btn btn-warning btn-sm">
+                        Submit Plan
+                    </a>
+
+                {% elif plan.is_submitted and not plan.is_approved %}
+                    Waiting for Approval
+
+                {% elif plan.is_approved %}
+    
+                {% if plan.session_set.count < plan.duration %}
+                    <a href="{% url 'add_session' plan.id %}" class="btn btn-success btn-sm">
+                        Add Session
+                    </a>
+                {% else %}
+                    Completed
+                {% endif %}
+
+                <a href="{% url 'view_sessions' plan.id %}" class="btn btn-info btn-sm">
+                    View Sessions
+                </a>
+
+                {% if plan.session_set.count >= plan.duration %}
+                <a href="{% url 'view_report' plan.id %}" class="btn btn-dark btn-sm">
+                    View Report
+                </a>
+                {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>

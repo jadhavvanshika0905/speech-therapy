@@ -1,0 +1,20 @@
+<div class="container mt-5">
+    <h2>Therapy Report</h2>
+
+    <p><b>Patient:</b> {{ report.plan.patient.name }}</p>
+    <p><b>Goals:</b> {{ report.plan.goals }}</p>
+
+    <hr>
+
+    <h4>Session Summary:</h4>
+
+    <pre>
+{{ report.summary }}
+    </pre>
+
+    <p><b>Status:</b> {{ report.status }}</p>
+
+    <a href="{% url 'plan_list' %}" class="btn btn-secondary mt-3">
+        Back
+    </a>
+</div>

@@ -1,1 +1,152 @@
-<h1>Supervior dashboard</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supervisor Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f8;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            background: #ddd;
+            border-radius: 20px;
+        }
+
+        .progress {
+            height: 10px;
+            background: green;
+            border-radius: 20px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            background: blue;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Supervisor Dashboard</h1>
+
+    <div style="text-align: right;">
+        <a href="{% url 'logout' %}" class="btn" style="background:red;">
+            Logout
+        </a>
+    </div>
+
+    <a href="{% url 'report_list' %}" class="btn">View Reports</a>
+
+    <hr>
+
+    {% for item in dashboard_data %}
+
+    <div class="card">
+
+        <h3>{{ item.plan.patient.name }}</h3>
+
+        <p>Sessions: {{ item.sessions_done }} / 10</p>
+
+        <a href="{% url 'add_feedback' item.plan.id %}" class="btn">
+            Add Feedback
+        </a>
+
+        <div class="progress-bar">
+            <div class="progress" style="width: {{ item.progress_percent }}%;"></div>
+        </div>
+
+        <p>
+            Status:
+            {% if item.sessions_done == 10 %}
+                Completed
+            {% else %}
+                Active
+            {% endif %}
+        </p>
+
+        {% if item.sessions_done == 10 %}
+            <a class="btn" href="{% url 'generate_certificate' item.plan.id %}">
+                Download Certificate
+            </a>
+        {% endif %}
+
+        {% if item.report %}
+            <a class="btn" href="{% url 'view_report' item.plan.id %}">
+                View Report
+            </a>
+        {% else %}
+            <p>No Report Yet</p>
+        {% endif %}
+
+    </div>
+
+    {% endfor %}
+
+    <hr>
+
+    <h2>Supervisor Feedback</h2>
+
+    {% for f in feedbacks %}
+
+    <div class="card">
+
+        <h4>{{ f.plan.patient.name }}</h4>
+
+        <p>{{ f.feedback }}</p>
+
+        <small>{{ f.created_at }}</small>
+
+        <br>
+
+        <a href="{% url 'edit_feedback' f.id %}" class="btn">
+            Edit
+        </a>
+
+        <a href="{% url 'delete_feedback' f.id %}" class="btn" style="background:red;">
+            Delete
+        </a>
+
+        <p>
+            Rating:
+            {% for i in "12345" %}
+                {% if forloop.counter <= f.rating %}
+                    ⭐
+                {% else %}
+                    ☆
+                {% endif %}
+            {% endfor %}
+        </p>
+
+    </div>
+
+    {% empty %}
+
+    <p>No feedback given yet.</p>
+
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

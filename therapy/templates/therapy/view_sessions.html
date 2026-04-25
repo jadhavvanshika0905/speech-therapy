@@ -1,0 +1,24 @@
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Speech Therapy System</h2>
+
+    <h2>Sessions</h2>
+    <h4>Total Sessions: {{ count }}/10</h4>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>No</th>
+            <th>Date</th>
+            <th>Progress</th>
+            <th>Notes</th>
+        </tr>
+
+        {% for s in sessions %}
+        <tr>
+            <td>{{ s.session_number }}</td>
+            <td>{{ s.date }}</td>
+            <td>{{ s.progress }}</td>
+            <td>{{ s.notes }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
