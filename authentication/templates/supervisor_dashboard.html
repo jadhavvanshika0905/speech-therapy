@@ -1,152 +1,535 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Supervisor Dashboard</title>
 
     <style>
         body {
+            margin: 0;
             font-family: Arial;
-            background: #f4f6f8;
+            background: #0f0f0f;
+            color: white;
         }
 
         .container {
-            width: 90%;
-            margin: auto;
+            display: flex;
         }
 
-        .card {
-            background: white;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 20px;
+            border-right: 1px solid #333;
         }
 
-        .progress-bar {
-            width: 100%;
-            background: #ddd;
-            border-radius: 20px;
+        .profile {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        .progress {
-            height: 10px;
-            background: green;
-            border-radius: 20px;
+        .profile img {
+            width: 80px;
+            border-radius: 50%;
         }
 
         .btn {
-            padding: 5px 10px;
-            background: blue;
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            background: #ff9800;
+            border: none;
             color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #e68900;
+        }
+
+        .btn.active {
+            background: #cc7700;
+            outline: 2px solid white;
+        }
+
+        .main {
+            flex: 1;
+            padding: 30px;
+            position: relative;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logout-btn {
+            background: #f44336;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
             text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #d32f2f;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #ff9800;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 25px;
+            border-collapse: collapse;
+            background: #1e1e1e;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #333;
+            text-align: center;
+        }
+
+        th {
+            background: #262626;
+            color: #ff9800;
+        }
+
+        tr:hover {
+            background: #2b2b2b;
+        }
+
+        .action-btn {
+            padding: 7px 12px;
+            border: none;
             border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        .view-btn {
+            background: #2196f3;
+        }
+
+        .feedback-btn {
+            background: #9c27b0;
+        }
+
+        .approve-btn {
+            background: #4caf50;
+        }
+
+        .reject-btn {
+            background: #f44336;
+        }
+
+        #therapistTable,
+        #patientTable,
+        #reportTable {
+            display: none;
+        }
+
+        .search-box {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .search-box input {
+            width: 300px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ff9800;
+            background: #1e1e1e;
+            color: white;
+            outline: none;
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>Supervisor Dashboard</h1>
+        <!-- Sidebar -->
+        <div class="sidebar">
 
-    <div style="text-align: right;">
-        <a href="{% url 'logout' %}" class="btn" style="background:red;">
-            Logout
-        </a>
-    </div>
+            <div class="profile">
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
+                <h3>{{ request.user.username }}</h3>
+                <p>Supervisor</p>
+            </div>
 
-    <a href="{% url 'report_list' %}" class="btn">View Reports</a>
+            <button id="btnTherapist" class="btn" onclick="showSection('therapistTable','btnTherapist')">
+                Show Therapists
+            </button>
 
-    <hr>
+            <button id="btnPatient" class="btn" onclick="showSection('patientTable','btnPatient')">
+                Show Patients
+            </button>
 
-    {% for item in dashboard_data %}
+            <button id="btnReports" class="btn" onclick="showSection('reportTable','btnReports')">
+                Review Reports
+            </button>
 
-    <div class="card">
+            <a href="{% url 'review_plans' %}" class="btn" style="display:flex;
+                      align-items:center;
+                      justify-content:center;
+                      width:100%;
+                      box-sizing:border-box;
+                      text-decoration:none;">
+                Review Plans
+            </a>
 
-        <h3>{{ item.plan.patient.name }}</h3>
+            <button class="btn" onclick="hideAll()">
+                Clear
+            </button>
 
-        <p>Sessions: {{ item.sessions_done }} / 10</p>
-
-        <a href="{% url 'add_feedback' item.plan.id %}" class="btn">
-            Add Feedback
-        </a>
-
-        <div class="progress-bar">
-            <div class="progress" style="width: {{ item.progress_percent }}%;"></div>
         </div>
 
-        <p>
-            Status:
-            {% if item.sessions_done == 10 %}
-                Completed
-            {% else %}
-                Active
-            {% endif %}
-        </p>
+        <!-- Main -->
+        <div class="main">
 
-        {% if item.sessions_done == 10 %}
-            <a class="btn" href="{% url 'generate_certificate' item.plan.id %}">
-                Download Certificate
-            </a>
-        {% endif %}
+            <!-- TOP RIGHT LOGOUT -->
+            <div class="topbar">
 
-        {% if item.report %}
-            <a class="btn" href="{% url 'view_report' item.plan.id %}">
-                View Report
-            </a>
-        {% else %}
-            <p>No Report Yet</p>
-        {% endif %}
+                <a href="{% url 'logout' %}" class="logout-btn">
+                    Logout
+                </a>
+
+            </div>
+
+            <h1>Supervisor Dashboard</h1>
+
+            <!-- CARDS -->
+            <div class="cards">
+
+                <div class="card">
+                    <h2>{{ therapist_count }}</h2>
+                    <p>Total Therapists</p>
+                </div>
+
+                <div class="card">
+                    <h2>{{ patient_count }}</h2>
+                    <p>Total Patients</p>
+                </div>
+
+                <div class="card">
+                    <h2>{{ completed }}</h2>
+                    <p>Completed</p>
+                </div>
+
+                <div class="card">
+                    <h2>{{ ongoing }}</h2>
+                    <p>Ongoing</p>
+                </div>
+
+            </div>
+
+            <!-- THERAPIST TABLE -->
+            <div id="therapistTable">
+
+                <h2 style="margin-top:30px;">Therapist List</h2>
+
+                <div class="search-box">
+                    <input type="text" id="therapistSearch" placeholder="Search therapist..."
+                        onkeyup="searchTherapist()">
+                </div>
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Specialization</th>
+                            <th>Experience</th>
+                            <th>Patients</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="therapistBody">
+
+                        {% for t in therapist_profiles %}
+                        <tr>
+                            <td>{{ t.full_name }}</td>
+                            <td>{{ t.specialization }}</td>
+                            <td>{{ t.experience_years }}</td>
+                            <td>{{ t.total_patients }}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- PATIENT TABLE -->
+            <div id="patientTable">
+
+                <h2 style="margin-top:30px;">Patient List</h2>
+
+                <div class="search-box">
+                    <input type="text" id="patientSearch" placeholder="Search patient..." onkeyup="searchPatient()">
+                </div>
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Issue</th>
+                            <th>Therapist</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="patientBody">
+
+                        {% for p in patients %}
+                        <tr>
+                            <td>{{ p.name }}</td>
+                            <td>{{ p.age }}</td>
+                            <td>{{ p.speech_issue }}</td>
+                            <td>{{ p.assigned_therapist.username }}</td>
+                            <td>{{ p.status }}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- REPORT TABLE -->
+            <div id="reportTable">
+
+                <h2 style="margin-top:30px;">
+                    Therapy Reports Review
+                </h2>
+
+                <div class="search-box">
+                    <input type="text" id="reportSearch" placeholder="Search reports..." onkeyup="searchReports()">
+                </div>
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Therapist</th>
+                            <th>Plan</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="reportBody">
+
+                        {% for report in reports %}
+                        <tr>
+
+                            <td>{{ report.plan.patient.name }}</td>
+
+                            <td>
+                                {{ report.plan.therapist.username }}
+                            </td>
+
+                            <td>{{ report.plan.title }}</td>
+
+                            <td>{{ report.status }}</td>
+
+                            <td>
+
+                                <!-- VIEW REPORT -->
+                                <a href="{% url 'view_report' report.plan.id %}">
+                                    <button class="action-btn view-btn">
+                                        View
+                                    </button>
+                                </a>
+
+                                <!-- FEEDBACK -->
+                                <a href="{% url 'add_feedback' report.plan.id %}">
+                                    <button class="action-btn feedback-btn">
+                                        Feedback
+                                    </button>
+                                </a>
+
+                                <!-- APPROVE -->
+                                <a href="{% url 'approve_report' report.id %}">
+                                    <button class="action-btn approve-btn">
+                                        Approve
+                                    </button>
+                                </a>
+
+                                <!-- REJECT -->
+                                <a href="{% url 'reject_report' report.id %}">
+                                    <button class="action-btn reject-btn">Reject</button>
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="5">
+                                No reports found.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
 
     </div>
 
-    {% endfor %}
+    <script>
 
-    <hr>
+        function showSection(sectionId, buttonId) {
 
-    <h2>Supervisor Feedback</h2>
+            const sections = [
+                'therapistTable',
+                'patientTable',
+                'reportTable'
+            ];
 
-    {% for f in feedbacks %}
+            const buttons = [
+                'btnTherapist',
+                'btnPatient',
+                'btnReports'
+            ];
 
-    <div class="card">
+            sections.forEach(id => {
+                document.getElementById(id).style.display =
+                    (id === sectionId) ? 'block' : 'none';
+            });
 
-        <h4>{{ f.plan.patient.name }}</h4>
+            buttons.forEach(id => {
+                document.getElementById(id).classList.remove('active');
+            });
 
-        <p>{{ f.feedback }}</p>
+            document.getElementById(buttonId)
+                .classList.add('active');
+        }
 
-        <small>{{ f.created_at }}</small>
+        function hideAll() {
 
-        <br>
+            [
+                'therapistTable',
+                'patientTable',
+                'reportTable'
+            ]
+                .forEach(id => {
+                    document.getElementById(id).style.display = 'none';
+                });
 
-        <a href="{% url 'edit_feedback' f.id %}" class="btn">
-            Edit
-        </a>
+            [
+                'btnTherapist',
+                'btnPatient',
+                'btnReports'
+            ]
+                .forEach(id => {
+                    document.getElementById(id).classList.remove('active');
+                });
+        }
 
-        <a href="{% url 'delete_feedback' f.id %}" class="btn" style="background:red;">
-            Delete
-        </a>
+        // SEARCH THERAPIST
+        function searchTherapist() {
 
-        <p>
-            Rating:
-            {% for i in "12345" %}
-                {% if forloop.counter <= f.rating %}
-                    ⭐
-                {% else %}
-                    ☆
-                {% endif %}
-            {% endfor %}
-        </p>
+            let input =
+                document.getElementById("therapistSearch")
+                    .value.toLowerCase();
 
-    </div>
+            let rows =
+                document.querySelectorAll("#therapistBody tr");
 
-    {% empty %}
+            rows.forEach(row => {
 
-    <p>No feedback given yet.</p>
+                let text =
+                    row.innerText.toLowerCase();
 
-    {% endfor %}
+                row.style.display =
+                    text.includes(input) ? "" : "none";
+            });
+        }
 
-</div>
+        // SEARCH PATIENT
+        function searchPatient() {
+
+            let input =
+                document.getElementById("patientSearch")
+                    .value.toLowerCase();
+
+            let rows =
+                document.querySelectorAll("#patientBody tr");
+
+            rows.forEach(row => {
+
+                let text =
+                    row.innerText.toLowerCase();
+
+                row.style.display =
+                    text.includes(input) ? "" : "none";
+            });
+        }
+
+        // SEARCH REPORT
+        function searchReports() {
+
+            let input =
+                document.getElementById("reportSearch")
+                    .value.toLowerCase();
+
+            let rows =
+                document.querySelectorAll("#reportBody tr");
+
+            rows.forEach(row => {
+
+                let text =
+                    row.innerText.toLowerCase();
+
+                row.style.display =
+                    text.includes(input) ? "" : "none";
+            });
+        }
+
+    </script>
 
 </body>
+
 </html>

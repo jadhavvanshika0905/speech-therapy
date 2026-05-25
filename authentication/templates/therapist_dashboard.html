@@ -1,26 +1,645 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Therapist Dashboard</title>
+    <meta charset="UTF-8">
+    <title>Therapist Dashboard | SpeechCare</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0f1a;
+            color: #cbd5e1;
+            min-height: 100vh;
+        }
+
+        /* ── NAVBAR ── */
+        .topnav {
+            background: #0f1623;
+            border-bottom: 1px solid #1e2535;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topnav .brand {
+            font-size: 16px;
+            font-weight: 600;
+            color: #60a5fa;
+            text-decoration: none;
+        }
+        .topnav .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .topnav .greeting {
+            font-size: 13px;
+            color: #64748b;
+        }
+        .topnav .btn-logout {
+            font-size: 12px;
+            padding: 5px 14px;
+            border: 1px solid #2d3748;
+            border-radius: 6px;
+            color: #94a3b8;
+            background: none;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .topnav .btn-logout:hover {
+            background: #1e2535;
+            color: #f1f5f9;
+            border-color: #3d4f6b;
+        }
+
+        /* ── LAYOUT ── */
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 56px);
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 240px;
+            background: #0f1623;
+            border-right: 1px solid #1e2535;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex-shrink: 0;
+        }
+        .profile-box {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #1e2535;
+            margin-bottom: 12px;
+        }
+        .avatar {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: #1a3a5c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #60a5fa;
+            margin: 0 auto 10px;
+            border: 2px solid #1e3a5c;
+        }
+        .profile-box h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+        .profile-box p {
+            font-size: 11px;
+            color: #475569;
+            margin-top: 3px;
+        }
+
+        /* ── STAT BOXES ── */
+        .stat-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .stat-box {
+            background: #161c2c;
+            border: 1px solid #1e2535;
+            border-radius: 8px;
+            padding: 8px 4px;
+            text-align: center;
+        }
+        .stat-num {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .stat-lbl {
+            font-size: 10px;
+            color: #475569;
+            margin-top: 2px;
+        }
+
+        /* ── NAV BUTTONS ── */
+        .nav-divider {
+            height: 1px;
+            background: #1e2535;
+            margin: 6px 0;
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 11px;
+            border-radius: 7px;
+            font-size: 13px;
+            color: #64748b;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: background 0.15s, color 0.15s;
+        }
+        .nav-btn:hover {
+            background: #161c2c;
+            color: #cbd5e1;
+            text-decoration: none;
+        }
+        .nav-btn.active {
+            background: #1a2b45;
+            color: #60a5fa;
+        }
+        .nav-btn i {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .nav-btn.danger {
+            color: #f87171;
+        }
+        .nav-btn.danger:hover {
+            background: #2a1a1a;
+            color: #fca5a5;
+        }
+
+        /* ── MAIN CONTENT ── */
+        .main {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .section {
+            padding: 22px 24px;
+            border-bottom: 1px solid #1e2535;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 14px;
+        }
+
+        /* ── SEARCH ── */
+        .search-wrap {
+            margin-bottom: 14px;
+        }
+        .search-wrap input {
+            width: 280px;
+            padding: 8px 12px;
+            background: #161c2c;
+            border: 1px solid #1e2535;
+            border-radius: 7px;
+            color: #cbd5e1;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-wrap input:focus {
+            border-color: #3d5a8a;
+        }
+        .search-wrap input::placeholder {
+            color: #334155;
+        }
+
+        /* ── TABLES ── */
+        .dark-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .dark-table th {
+            text-align: left;
+            padding: 9px 12px;
+            color: #334155;
+            font-weight: 400;
+            border-bottom: 1px solid #1e2535;
+            white-space: nowrap;
+        }
+        .dark-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #131929;
+            color: #94a3b8;
+            vertical-align: middle;
+        }
+        .dark-table tr:last-child td {
+            border-bottom: none;
+        }
+        .dark-table tbody tr:hover td {
+            background: #131929;
+        }
+        .dark-table td.name {
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        /* ── BADGES ── */
+        .badge-dark {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .badge-ongoing  { background: #2d1a00; color: #fbbf24; }
+        .badge-completed{ background: #0d2818; color: #4ade80; }
+        .badge-approved { background: #0d2818; color: #4ade80; }
+        .badge-pending  { background: #1a1030; color: #a78bfa; }
+        .badge-rejected { background: #2a0d0d; color: #f87171; }
+
+        /* ── FEEDBACK CARDS ── */
+        .feedback-card {
+            background: #0f1623;
+            border: 1px solid #1e2535;
+            border-left: 3px solid #f59e0b;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+        }
+        .feedback-card:last-child {
+            margin-bottom: 0;
+        }
+        .fb-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .fb-plan-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+        .fb-patient {
+            font-size: 11px;
+            color: #475569;
+            margin-top: 3px;
+        }
+        .fb-stars {
+            color: #f59e0b;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .fb-stars span {
+            font-size: 11px;
+            color: #475569;
+            margin-left: 3px;
+        }
+        .fb-text {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 11px;
+        }
+
+        /* ── ACTION BUTTONS ── */
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            padding: 5px 11px;
+            border: 1px solid #2d3748;
+            border-radius: 6px;
+            color: #94a3b8;
+            background: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.15s;
+            margin-right: 5px;
+        }
+        .btn-action:hover {
+            background: #1e2535;
+            color: #e2e8f0;
+            border-color: #3d4f6b;
+            text-decoration: none;
+        }
+        .btn-action i {
+            font-size: 13px;
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #334155;
+            font-size: 13px;
+        }
+
+        /* ── NOTIFICATION BELL (optional) ── */
+        .notif-badge {
+            background: #f59e0b;
+            color: #0f1623;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 10px;
+            margin-left: 4px;
+        }
+
+        /* ── CHAT NAV ── */
+        .nav-section-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            padding: 4px 11px 2px;
+        }
+        .chat-nav-btn .chat-patient-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .chat-unread {
+            background: #60a5fa;
+            color: #0b0f1a;
+            animation: none;
+            flex-shrink: 0;
+        }
+
+        /* ── CHAT BUTTON IN TABLE ── */
+        .btn-chat {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            padding: 5px 11px;
+            border: 1px solid #1e3a5c;
+            border-radius: 6px;
+            color: #60a5fa;
+            background: rgba(96,165,250,.08);
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.15s;
+        }
+        .btn-chat:hover {
+            background: rgba(96,165,250,.18);
+            border-color: #60a5fa;
+            color: #93c5fd;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container mt-5">
-    <h2 class="mb-4">Therapist Dashboard</h2>
+<!-- ── TOP NAVBAR ── -->
+<nav class="topnav">
+    <a class="brand" href="/">SpeechCare</a>
+    <div class="nav-right">
+        <span class="greeting">👋 {{ request.user.username }}</span>
+        <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+    </div>
+</nav>
 
-    <!-- 🔥 YOUR BUTTONS -->
-    <a href="/therapy/add-patient/" class="btn btn-primary m-2">Add Patient</a>
+<div class="layout">
 
-    <a href="/therapy/create-plan/" class="btn btn-success m-2">Create Therapy Plan</a>
+    <!-- ── SIDEBAR ── -->
+    <div class="sidebar">
 
-    <a href="/therapy/patients/" class="btn btn-info m-2">View Patients</a>
+        <div class="profile-box">
+            <div class="avatar">{{ request.user.username|slice:":2"|upper }}</div>
+            <h3>{{ request.user.username }}</h3>
+            <p>Therapist</p>
+        </div>
 
-    <a href="/therapy/plans/" class="btn btn-dark m-2">View Plans</a>
+        <!-- STATS -->
+        <div class="stat-row">
+            <div class="stat-box">
+                <div class="stat-num" style="color:#60a5fa">{{ total }}</div>
+                <div class="stat-lbl">Total</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" style="color:#4ade80">{{ completed|default:"0" }}</div>
+                <div class="stat-lbl">Done</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" style="color:#fbbf24">{{ ongoing }}</div>
+                <div class="stat-lbl">Active</div>
+            </div>
+        </div>
 
-    <a href="/logout" class="btn btn-danger m-2">Logout</a>
+        <div class="nav-divider"></div>
 
+        <a href="{% url 'therapist_dashboard' %}" class="nav-btn active">
+            <i class="ti ti-users"></i> My patients
+        </a>
+        <a href="{% url 'create_plan' %}" class="nav-btn">
+            <i class="ti ti-file-plus"></i> Create plan
+        </a>
+        <a href="/therapy/patients/" class="nav-btn">
+            <i class="ti ti-list"></i> View patients
+        </a>
+        <a href="{% url 'completed_patients' %}" class="nav-btn">
+            <i class="ti ti-circle-check"></i> Completed
+        </a>
+        <a href="{% url 'my_plans' %}" class="nav-btn">
+            <i class="ti ti-clipboard-list"></i> View plans
+        </a>
+        <a href="{% url 'therapist_appointments' %}" class="nav-btn">
+            <i class="ti ti-calendar"></i> Appointments
+        </a>
+        <a href="{% url 'report_list' %}" class="nav-btn">
+            <i class="ti ti-chart-bar"></i> My reports
+            {% if pending_plans > 0 %}
+                <span class="notif-badge">{{ pending_plans }}</span>
+            {% endif %}
+        </a>
+
+        <!-- ── SESSION CHAT ── -->
+        <div class="nav-divider"></div>
+        <div class="nav-section-label">Patient Chat</div>
+
+        {% for patient in patients %}
+        <a href="{% url 'session_chat' patient.active_session_id %}" class="nav-btn chat-nav-btn">
+            <i class="ti ti-message-2"></i>
+            <span class="chat-patient-name">{{ patient.name }}</span>
+            {% if patient.unread_count > 0 %}
+                <span class="notif-badge chat-unread" data-patient="{{ patient.id }}">{{ patient.unread_count }}</span>
+            {% endif %}
+        </a>
+        {% empty %}
+        <span class="nav-btn" style="cursor:default;opacity:.4;font-size:11px;">No patients assigned</span>
+        {% endfor %}
+
+        <div class="nav-divider"></div>
+
+        <a href="{% url 'logout' %}" class="nav-btn danger">
+            <i class="ti ti-logout"></i> Logout
+        </a>
+
+    </div>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="main">
+
+        <!-- ── PATIENTS SECTION ── -->
+        <div class="section">
+            <p class="section-title">My assigned patients</p>
+
+            <div class="search-wrap">
+                <input type="text" id="patientSearch" placeholder="Search patient...">
+            </div>
+
+            {% if patients %}
+            <table class="dark-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Speech issue</th>
+                        <th>Contact</th>
+                        <th>Status</th>
+                        <th>Chat</th>
+                    </tr>
+                </thead>
+                <tbody id="patientBody">
+                    {% for patient in patients %}
+                    <tr>
+                        <td style="color:#334155">{{ forloop.counter }}</td>
+                        <td class="name">{{ patient.name }}</td>
+                        <td>{{ patient.age }}</td>
+                        <td>{{ patient.speech_issue }}</td>
+                        <td style="color:#475569">{{ patient.contact }}</td>
+                        <td>
+                            {% if patient.status == 'completed' %}
+                                <span class="badge-dark badge-completed">Completed</span>
+                            {% else %}
+                                <span class="badge-dark badge-ongoing">Ongoing</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'session_chat' patient.active_session_id %}"
+                               class="btn-chat">
+                                <i class="ti ti-message-2"></i> Chat
+                                {% if patient.unread_count > 0 %}
+                                    <span style="background:#f59e0b;color:#0b0f1a;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;">
+                                        {{ patient.unread_count }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">No patients assigned yet.</div>
+            {% endif %}
+        </div>
+
+        <!-- ── SUPERVISOR FEEDBACK SECTION ── -->
+        {% if feedbacks %}
+        <div class="section">
+            <p class="section-title">Supervisor feedback</p>
+
+            {% for fb in feedbacks %}
+            <div class="feedback-card">
+                <div class="fb-header">
+                    <div>
+                        <div class="fb-plan-name">{{ fb.plan.title }} — {{ fb.plan.patient.name }}</div>
+                        <div class="fb-patient">Reviewed by supervisor</div>
+                    </div>
+                    <div class="fb-stars">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= fb.rating %}★{% else %}☆{% endif %}
+                        {% endfor %}
+                        <span>{{ fb.rating }}/5</span>
+                    </div>
+                </div>
+                <div class="fb-text">{{ fb.feedback }}</div>
+                <a href="{% url 'generate_report' fb.plan.id %}" class="btn-action">
+                    <i class="ti ti-edit"></i> Update report
+                </a>
+                <a href="{% url 'view_report' fb.plan.id %}" class="btn-action">
+                    <i class="ti ti-eye"></i> View report
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- ── MY REPORTS SECTION ── -->
+        {% if reports %}
+        <div class="section">
+            <p class="section-title">Submitted reports</p>
+
+            <table class="dark-table">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Plan</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td class="name">{{ report.plan.patient.name }}</td>
+                        <td style="color:#475569">{{ report.plan.title }}</td>
+                        <td>
+                            {% if report.status == 'approved' %}
+                                <span class="badge-dark badge-approved">Approved</span>
+                            {% elif report.status == 'rejected' %}
+                                <span class="badge-dark badge-rejected">Rejected</span>
+                            {% else %}
+                                <span class="badge-dark badge-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'view_report' report.plan.id %}" class="btn-action">
+                                <i class="ti ti-eye"></i> View
+                            </a>
+                            <a href="{% url 'generate_report' report.plan.id %}" class="btn-action">
+                                <i class="ti ti-edit"></i> Edit
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="section">
+            <p class="section-title">Submitted reports</p>
+            <div class="empty-state">No reports submitted yet. Generate a report from your plans.</div>
+        </div>
+        {% endif %}
+
+    </div>
 </div>
+
+<!-- Tabler Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+<script>
+    document.getElementById("patientSearch").addEventListener("keyup", function () {
+        let val = this.value.toLowerCase();
+        document.querySelectorAll("#patientBody tr").forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(val) ? "" : "none";
+        });
+    });
+</script>
 
 </body>
 </html>

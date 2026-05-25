@@ -1,0 +1,38 @@
+<h2 style="margin-top:30px;">Therapists</h2>
+
+<table style="width:100%; border-collapse: collapse; margin-top:15px;">
+
+    <tr style="background:#1e1e1e;">
+        <th style="padding:10px;">Name</th>
+        <th>Email</th>
+        <th>Total Patients</th>
+        <th>Action</th>
+    </tr>
+
+    {% for therapist in therapists %}
+    <tr style="background:#2a2a2a; text-align:center;">
+        <td style="padding:10px;">{{ therapist.username }}</td>
+        <td>{{ therapist.email }}</td>
+        <td>{{ therapist.total_patients }}</td>
+        
+        <td>
+            <a href="{% url 'view_therapist_patients' therapist.id %}">
+                <button style="
+                    background: orange;
+                    border: none;
+                    padding: 6px 12px;
+                    border-radius: 6px;
+                    cursor: pointer;
+                ">
+                    View Patients
+                </button>
+            </a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">No therapists found</td>
+    </tr>
+    {% endfor %}
+
+</table>
